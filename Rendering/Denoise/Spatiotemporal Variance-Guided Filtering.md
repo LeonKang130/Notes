@@ -34,5 +34,11 @@ To improve image quality, we resample $C_{i-1}$ by using a $2\times2$ tap biline
 
 ### Variance Estimation
 
-We estimate per-pixel luminance variance using $\mu_1$ and $\mu_2$, the first and second raw moments of color luminance.
+We estimate per-pixel luminance variance using $\mu_1$ and $\mu_2$, the first and second raw moments of color luminance. We estimate the variance from the integrated moments $\mu_{1_i}'$ and $\mu_{2_i}'$ using $\sigma_i'^2=\mu'_{2_i}-\mu'_{1_i}$.
+
+Where our temporal history is limited, we instead estimate the variance $\sigma_i'^2$ spatially using a $7\times7$ bilateral filter.
+
+### Edge-avoiding A-Trous Wavelet Transform
+
+ 
 
