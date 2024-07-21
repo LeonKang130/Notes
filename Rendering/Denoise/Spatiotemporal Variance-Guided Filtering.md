@@ -34,11 +34,36 @@ To improve image quality, we resample $C_{i-1}$ by using a $2\times2$ tap biline
 
 ### Variance Estimation
 
-We estimate per-pixel luminance variance using $\mu_1$ and $\mu_2$, the first and second raw moments of color luminance. We estimate the variance from the integrated moments $\mu_{1_i}'$ and $\mu_{2_i}'$ using $\sigma_i'^2=\mu'_{2_i}-\mu'_{1_i}$.
+We estimate per-pixel luminance variance using $\mu_1$ and $\mu_2$, the first and second raw moments of color luminance. We estimate the variance from the integrated moments $\mu_{1_i}'$ and $\mu_{2_i}'$ using $\sigma_i'^2=\mu'_{2_i}-\mu'^2_{1_i}$.
 
 Where our temporal history is limited, we instead estimate the variance $\sigma_i'^2$ spatially using a $7\times7$ bilateral filter.
 
 ### Edge-avoiding A-Trous Wavelet Transform
 
- 
+$$
+\hat{c}_{i+1}(p)=\frac{\sum_{q\in\Omega}h(q)\cdot w(p,q)\cdot\hat{c}_i(q)}{\sum_{q\in\Omega}h(q)\cdot w(p,q)}
+$$
+
+ Our novel weight function uses depth, world-space normals as well as the luminance of the filter input:
+$$
+w_i(p,q)=w_z\cdot w_n\cdot w_l
+$$
+
+### Edge-Stopping Functions
+
+$$
+w_z=\exp(-\frac{|z(p)-z(q)|}{\sigma_z|\nabla z(p)\cdot(p-q)+\varepsilon|})
+$$
+
+$$
+w_n=\max(0,n(p)\cdot n(q))^{\sigma_n}
+$$
+
+$$
+w_l=\exp(-\frac{|l_i(p)-l_i(q)|}{\sigma_l\sqrt{g_{3\times3}(\text{Var}(l_i(p)))}+\varepsilon})
+$$
+
+## Results
+
+Compared to EAW(Edge-avoiding A-Trous Wavelet), SVGF is able to preserve shadow better and achieve better visual quality. However, there are still failure cases where sharp shadows or reflections get blurred incorrectly, or shadows mismatch their own casters due to fast motion during the previous frame.
 
